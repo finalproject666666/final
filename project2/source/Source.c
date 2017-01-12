@@ -4,7 +4,9 @@
 
 void print_blanks(void);                                                        //印出遊戲初始的格子
 void open_cell(int *op_x, int *op_y);                                           //請使用者輸入要打開的位置 6
-void put_mine(int cells[][11], int op_x, int op_y);                             //放置地雷 31
+void put_mine(int cells[][11], int op_x, int op_y);								//放置地雷 31
+void calculate_num_of_cells(int cells[][11]);
+void assign_inf_after_open(int cells[][11], int op_x, int op_y);
 
 
 int main()
@@ -13,7 +15,11 @@ int main()
 		open_x, open_y;
 	print_blanks();
 	open_cell(&open_x, &open_y);                                             //請使用者輸入要打開的位置
-	put_mine(cells, open_x, open_y);                                         //放置地雷
+	put_mine(cells, open_x, open_y);										//放置地雷
+	calculate_num_of_cells(cells);											//計算非地雷區附近有幾顆地雷
+	assign_inf_after_open(cells, open_x, open_y);							//改變使用者打開的位置之資訊
+
+	
 	system("pause");
 	return 0;
 }
@@ -64,4 +70,20 @@ void put_mine(int cells[][11], int op_x, int op_y) {                            
 			n++;
 		}
 	} while (n < 10);
+}
+void calculate_num_of_cells(int cells[][11]) {                                  //計算非地雷區附近有幾彈地雷 
+	int i, j, u, v;
+	for (i = 1; i <= 9; i++)
+	for (j = 1; j <= 9; j++)
+	if (cells[i][j] == 0)							    //若沒按到地雷則將檢查週圍有幾個地雷就
+	for (u = i - 1; u <= i + 1; u++)					//將按的位置數值加多少
+	for (v = j - 1; v <= j + 1; v++)
+	if (cells[u][v] == -1)
+		cells[i][j]++;
+}
+void assign_inf_after_open(int cells[][11], int op_x, int op_y) {               //改變使用者打開的位置之資訊 
+	if (cells[op_x][op_y] == -1)
+		cells[op_x][op_y] = -2;
+	if (cells[op_x][op_y] >= 0 && cells[op_x][op_y] <= 8)
+		cells[op_x][op_y] += 10;
 }
